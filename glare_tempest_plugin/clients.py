@@ -20,7 +20,7 @@ from tempest import config
 from tempest.lib import auth
 
 
-from services.artifacts import artifacts_client
+from glare_tempest_plugin.services.artifacts import artifacts_client
 
 
 
