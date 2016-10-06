@@ -28,7 +28,7 @@ class GlareTempestPlugin(plugins.TempestPlugin):
     def load_tests(self):
         base_path = os.path.split(os.path.dirname(
             os.path.abspath(__file__)))[0]
-        test_dir = "tests"
+        test_dir = "glare_tempest_plugin/tests"
         full_test_dir = os.path.join(base_path, test_dir)
         return full_test_dir, base_path
 
@@ -37,9 +37,13 @@ class GlareTempestPlugin(plugins.TempestPlugin):
             conf, glare_config.service_available_group,
             glare_config.ServiceAvailableGroup
         )
+        config.register_opt_group(conf, glare_config.artifacts_group,
+                                  glare_config.ArtifactGroup)
 
     def get_opt_lists(self):
         return [
             (glare_config.service_available_group.name,
-             glare_config.ServiceAvailableGroup)
+             glare_config.ServiceAvailableGroup),
+            (glare_config.artifacts_group.name,
+             glare_config.ArtifactGroup)
         ]

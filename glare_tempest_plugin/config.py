@@ -24,3 +24,15 @@ ServiceAvailableGroup = [
                 default=True,
                 help="Whether or not glare is expected to be available")
 ]
+
+artifacts_group = cfg.OptGroup(name="artifacts",
+                               title='Glare Options')
+
+ArtifactGroup = [
+    cfg.StrOpt("type_name",
+               default=""),
+    cfg.StrOpt("endpoint_type",
+               default="publicURL",
+               choices=["publicURL", "adminURL", "internalURL"],
+               help="The endpoint type for artifacts service")
+]
