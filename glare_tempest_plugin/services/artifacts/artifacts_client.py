@@ -24,9 +24,12 @@ CONF = config.CONF
 class ArtifactsClient(rest_client.RestClient):
 
     def __init__(self, auth_provider):
-        super(ArtifactsClient, self.__init__(
-            auth_provider
-            ))
+        super(ArtifactsClient, self).__init__(
+            auth_provider,
+            CONF.artifacts.catalog_type,
+            CONF.identity.region,
+            endpoint_type=CONF.artifacts.endpoint_type
+            )
 
     def _request_and_check_resp(self, request_func, uri,
                                 rest_status):
@@ -39,10 +42,23 @@ class ArtifactsClient(rest_client.RestClient):
         self.expected_success(resp_status, resp.status)
         return resp, body
 
-    def list_all_artifacts(self):
-        uri = 'v1/artifacts/all'
+    def create_artifact(self, type_name, name, version='0.0.0', **kwargs):
+        kwargs.update({'name': name, 'version': version})
+        uri = '/artifacts/{type_name}'.format(type_name=type_name)
+        resp, body = self.post(uri, body=json.dumps(kwargs))
+        self.expected_success(201, resp.status)
+        parsed = self._parse_resp(body)
+        return parsed 
+
+    def delete_artifact(self, type_name, art_id):
+        uri = '/artifacts/{type_name}/{id}'.format(
+               type_name=type_name,
+               id=art_id)
+        resp, body = self.delete(uri)
+
+    def list_artifacts(self, type_name):
+        uri = 'artifacts/{}'.format(type_name) 
         resp, body = self.get(uri)
         self.expected_success(200, resp.status)
         parsed = self._parse_resp(body)
-        return parsed['artifacts']
-
+        return parsed

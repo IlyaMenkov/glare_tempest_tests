@@ -21,8 +21,9 @@ import tempest.test
 from tempest.lib import base
 from glare_tempest_plugin import clients
 from glare_tempest_plugin.common import plugin_utils
+from tempest.common import dynamic_creds
 
-
+from tempest.common import credentials_factory as common_creds
 CONF = config.CONF
 
 
@@ -33,6 +34,7 @@ class BaseArtifactTest(base.BaseTestCase):
     def setUpClass(cls):
         super(BaseArtifactTest, cls).setUpClass()
         cls.resource_setup()
+        pass
 
     @classmethod
     def tearDownClass(cls):
@@ -44,3 +46,37 @@ class BaseArtifactTest(base.BaseTestCase):
 
         os = clients.Manager(credentials=creds)
         client = os.artifact_client
+
+    @classmethod
+    def resource_setup(cls):
+        if not CONF.service_available.glare:
+            skip_msg = "Glare is disabled"
+            raise cls.skipException(skip_msg)
+        if not hasattr(cls, "os"):
+            creds = cls.get_configured_isolated_creds(type_of_creds='primary')
+            cls.os = clients.Manager(credentials=creds)
+        cls.artifacts_client = cls.os.artifacts_client
+
+    @classmethod
+    def get_configured_isolated_creds(cls, type_of_creds='admin'):
+        identity_version = CONF.identity.auth_version
+        if identity_version == 'v3':
+            cls.admin_role = CONF.identity.admin_role
+        else:
+            cls.admin_role = 'admin'
+        cls.dynamic_cred = dynamic_creds.DynamicCredentialProvider(
+            identity_version=CONF.identity.auth_version,
+            name=cls.__name__, admin_role=cls.admin_role,
+            admin_creds=common_creds.get_configured_admin_credentials(
+                'identity_admin'))
+        if type_of_creds == 'primary':
+            creds = cls.dynamic_cred.get_primary_creds()
+        elif type_of_creds == 'admin':
+            creds = cls.dynamic_cred.get_admin_creds()
+        elif type_of_creds == 'alt':
+            creds = cls.dynamic_cred.get_alt_creds()
+        else:
+            creds = cls.dynamic_cred.get_credentials(type_of_creds)
+        cls.dynamic_cred.type_of_creds = type_of_creds
+
+        return creds.credentials

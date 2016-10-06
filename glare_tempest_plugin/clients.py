@@ -30,9 +30,9 @@ class Manager(object):
     def __init__(self, credentials=common_creds.get_configured_admin_credentials(
                  'identity_admin')):
         self.auth_provider = get_auth_provider(credentials)
-        artifacts_client.ArtifactsClient(self.auth_provider)
+#        artifacts_client.ArtifactsClient(self.auth_provider)
 
-        self.artifact_client = artifacts_client.ArtifactsClient(
+        self.artifacts_client = artifacts_client.ArtifactsClient(
             self.auth_provider)
 
 

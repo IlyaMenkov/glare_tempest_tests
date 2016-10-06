@@ -28,4 +28,6 @@ class TestListSanity(base.BaseArtifactTest):
 
     @testtools.testcase.attr('smoke')
     def test_list_artifacts(self):
-        art_list = self.artifact_client.list_all_artifacts()
+        art = self.artifacts_client.create_artifact('images', 'tempest_test')
+        art_list = self.artifacts_client.list_artifacts('images')
+        raise RuntimeError(art_list)
