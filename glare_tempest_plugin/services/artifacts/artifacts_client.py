@@ -25,9 +25,7 @@ class ArtifactsClient(rest_client.RestClient):
 
     def __init__(self, auth_provider):
         super(ArtifactsClient, self.__init__(
-            auth_provider,
-            CONF.identity.region,
-            CONF.artifacts.endpoint_type
+            auth_provider
             ))
 
     def _request_and_check_resp(self, request_func, uri,

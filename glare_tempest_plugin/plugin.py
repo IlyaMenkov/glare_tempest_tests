@@ -17,6 +17,7 @@
 import os
 
 
+from oslo_config import cfg
 from tempest import config
 from tempest.test_discover import plugins
 
@@ -33,12 +34,18 @@ class GlareTempestPlugin(plugins.TempestPlugin):
         return full_test_dir, base_path
 
     def register_opts(self, conf):
-        config.register_opt_group(
-            conf, glare_config.service_available_group,
-            glare_config.ServiceAvailableGroup
-        )
-        config.register_opt_group(conf, glare_config.artifacts_group,
-                                  glare_config.ArtifactGroup)
+        try:
+            config.register_opt_group(
+                conf, glare_config.service_available_group,
+                glare_config.ServiceAvailableGroup
+            )
+        except cfg.DuplicateOptError:
+            pass
+        try:
+            config.register_opt_group(conf, glare_config.artifacts_group,
+                                      glare_config.ArtifactGroup)
+        except cfg.DuplicateOptError:
+            pass
 
     def get_opt_lists(self):
         return [

@@ -22,8 +22,6 @@ from tempest.lib import auth
 
 from glare_tempest_plugin.services.artifacts import artifacts_client
 
-
-
 CONF = config.CONF
 
 
@@ -36,6 +34,7 @@ class Manager(object):
 
         self.artifact_client = artifacts_client.ArtifactsClient(
             self.auth_provider)
+
 
 def get_auth_provider(credentials, scope='project'):
     default_params = {
