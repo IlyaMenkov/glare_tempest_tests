@@ -30,4 +30,9 @@ class TestListSanity(base.BaseArtifactTest):
     def test_list_artifacts(self):
         art = self.artifacts_client.create_artifact('images', 'tempest_test')
         art_list = self.artifacts_client.list_artifacts('images')
-        raise RuntimeError(art_list)
+        art_new = self.artifacts_client.get_artifact('images', art['id'])
+        art_updated = self.artifacts_client.update_artifact('images', art['id'],
+        data = 'dataaaa'
+        art_upload = self.artifacts_client.upload_blob('images', art['id'], 'image', data)
+        image_downloaded = self.artifacts_client.download_blob('images', art['id'], 'image')
+        self.artifacts_client.delete_artifact('images', art['id'])
